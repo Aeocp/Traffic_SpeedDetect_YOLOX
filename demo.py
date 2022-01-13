@@ -331,13 +331,13 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                     origin_previous_midpoint = (previous_midpoint[0], frame.shape[0] - previous_midpoint[1])
                     speedList = []
                     
-                     #เช็คการตัดในแต่ละเส้น
-                     line_o = line1[0]
-                     # เช็คการตัดเส้น
-                     TC1 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line_o[0] ,line_o[1])
-                     if TC1 and (track.track_id not in line1_ac):
+                    #เช็คการตัดในแต่ละเส้น
+                    line_o = line1[0]
+                    # เช็คการตัดเส้น
+                    TC1 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line_o[0] ,line_o[1])
+                    if TC1 and (track.track_id not in line1_ac):
                         if track.track_id not in time_mem:
-                          time_mem[track.track_id] = []
+                            time_mem[track.track_id] = []
                         time_mem[track.track_id].append(frame_index+1)
                         line_tc[0][0] += 1
                         # draw alert line
@@ -346,11 +346,11 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                         intersection_time = datetime.datetime.now() - datetime.timedelta(microseconds=datetime.datetime.now().microsecond)
                         intersect_info[0].append([track_cls, origin_midpoint, intersection_time])
 
-                     line_o = line2[0]
-                     TC2 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line_o[0] ,line_o[1])
-                     if TC2 and (track.track_id not in line2_ac):
+                    line_o = line2[0]
+                    TC2 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line_o[0] ,line_o[1])
+                    if TC2 and (track.track_id not in line2_ac):
                         if track.track_id not in time_mem:
-                          time_mem[track.track_id] = []
+                            time_mem[track.track_id] = []
                         time_mem[track.track_id].append(frame_index+1)
                         line_tc[0][1] += 1
                         # draw alert line
@@ -359,8 +359,8 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                         intersection_time = datetime.datetime.now() - datetime.timedelta(microseconds=datetime.datetime.now().microsecond)
                         intersect_info[0].append([track_cls, origin_midpoint, intersection_time])
 
-                      #คำนวณความเร็ว
-                      if track.track_id in time_mem and len(time_mem[track.track_id]) == 2:
+                    #คำนวณความเร็ว
+                    if track.track_id in time_mem and len(time_mem[track.track_id]) == 2:
                         time1 = time_mem[track.track_id][0]
                         time2 = time_mem[track.track_id][1]
                         time_mem[track.track_id] = []
@@ -370,13 +370,13 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                         savg = 0
                         co = len(speed_list)
                         for s in speed_list:
-                          savg += speed_list[s]
+                            savg += speed_list[s]
                         speed_avg = ('%.2f' % (savg/co))
                         print("Frame:",frame_index ," ID:" ,track.track_id ," speed:" ,('%.2f' %speed))
 
-                      cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (0, 255, 0), 2)
-                      cv2.putText(frame, "ID: " + str(track.track_id), (int(bbox[0]), int(bbox[1])), 0, 1.5e-3 * frame.shape[0], (0, 255, 0), 2)
-                      if track.track_id in speed_list:
+                    cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (0, 255, 0), 2)
+                    cv2.putText(frame, "ID: " + str(track.track_id), (int(bbox[0]), int(bbox[1])), 0, 1.5e-3 * frame.shape[0], (0, 255, 0), 2)
+                    if track.track_id in speed_list:
                         cv2.putText(frame, str('%.2f' %speed_list[track.track_id]), (int(bbox[2]), int(bbox[1])), 0, 1.5e-3 * frame.shape[0], (0, 0, 255), 2)
             
                 # Delete memory of old tracks.
@@ -385,7 +385,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                     del memory[list(memory)[0]]
                 
                 # Draw total count.
-                 yy = 0.1 * frame.shape[0]
+                yy = 0.1 * frame.shape[0]
                 xx = 1
                 cv2.putText(frame, "Total{}: {},{}".format(str(xx),str(line_tc[0][0]),str(line_tc[0][1])), (int(0.05 * frame.shape[1]), int(yy)), 0,
                             1.5e-3 * frame.shape[0], (0, 255, 255), 2)
