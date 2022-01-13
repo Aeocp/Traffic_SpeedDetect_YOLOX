@@ -265,15 +265,10 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     time_mem = {}   # เก็บframeที่IDนั้นๆผ่านของแต่ละเส้น
     speed_list = {} # ลิสความเร็วทั้งหมดที่คำนวณได้
     speed_avg = 0   # ค่าเฉลี่ยความเร็วทั้งหมด        
-
-    #สร้างเส้นผ่าน
-    frameY = width #360
-    frameX = height #640
-    line1 = []
-    line2 = []
-    #สร้างเส้น1,2ของถนนแต่ละเส้น:
-    line1.append([(int(float(x1[0]) * width), int(float(y1[0])* height)), (int(float(x1[1]) * width), int(float(y1[1]) * height))])
-    line2.append([(int(float(x2[0]) * width), int(float(y2[0])* height)), (int(float(x2[1]) * width), int(float(y2[1]) * height))])
+    test = 1
+    # สร้างเส้นผ่าน1,2
+    line1 = [(int(float(x1[0]) * width), int(float(y1[0])* height)), (int(float(x1[1]) * width), int(float(y1[1]) * height))]
+    line2 = [(int(float(x2[0]) * width), int(float(y2[0])* height)), (int(float(x2[1]) * width), int(float(y2[1]) * height))]
         
     while True:
         if (test == 1):
@@ -281,16 +276,14 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
         else:
             ret_val, frame = cap.read()
             # วาดเส้นทั้งหมดลงใน frame
-            line_1 = line1[0]
-            cv2.line(frame, line_1[0], line_1[1], (255, 255, 255), 2)
-            line_2 = line2[0]
-            cv2.line(frame, line_2[0], line_2[1], (255, 255, 255), 2)
+            cv2.line(frame, line1[0], line1[1], (255, 255, 255), 2)
+            cv2.line(frame, line2[0], line2[1], (255, 255, 255), 2)
         if ret_val:
             # Process every n frames
             t1 = time.time()
             if mmglobal.frame_count % 3 == 0:
                 outputs, img_info = predictor.inference(frame)
-                #รับข้อมูลทุกอย่าฃ
+                # รับข้อมูลทุกอย่าฃ
                 result_frame, a = predictor.visual(outputs[0], img_info, predictor.confthre)
                 # a = [bboxes, scores, self.cls_names]
                 boxes = a[0] 
@@ -330,30 +323,27 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                     origin_previous_midpoint = (previous_midpoint[0], frame.shape[0] - previous_midpoint[1])
                     speedList = []
                     
-                    #เช็คการตัดในแต่ละเส้น
-                    line_o = line1[0]
-                    # เช็คการตัดเส้น
-                    TC1 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line_o[0] ,line_o[1])
+                    #เช็คการตัดในเส้นที่ 1 
+                    TC1 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line1[0] ,line1[1])
                     if TC1 and (track.track_id not in line1_ac):
                         if track.track_id not in time_mem:
                             time_mem[track.track_id] = []
                         time_mem[track.track_id].append(frame_index+1)
                         line_tc[0][0] += 1
                         # draw alert line
-                        cv2.line(frame, line_o[0], line_o[1], (0, 0, 255), 2)
+                        cv2.line(frame, line1[0], line1[1], (0, 0, 255), 2)
                         line1_ac.append(track.track_id)  # ID นี้ผ่านเส้นนี้แล้ว
                         intersection_time = datetime.datetime.now() - datetime.timedelta(microseconds=datetime.datetime.now().microsecond)
                         intersect_info[0].append([track_cls, origin_midpoint, intersection_time])
-
-                    line_o = line2[0]
-                    TC2 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line_o[0] ,line_o[1])
+                    #เช็คการตัดในเส้นที่ 2 
+                    TC2 = CheckCrossLine.LineCrossing(midpoint, previous_midpoint, line2[0] ,line2[1])
                     if TC2 and (track.track_id not in line2_ac):
                         if track.track_id not in time_mem:
                             time_mem[track.track_id] = []
                         time_mem[track.track_id].append(frame_index+1)
                         line_tc[0][1] += 1
                         # draw alert line
-                        cv2.line(frame, line_o[0], line_o[1], (0, 0, 255), 2)
+                        cv2.line(frame, line2[0], line2[1], (0, 0, 255), 2)
                         line2_ac.append(track.track_id)  # Set already counted for ID to true.
                         intersection_time = datetime.datetime.now() - datetime.timedelta(microseconds=datetime.datetime.now().microsecond)
                         intersect_info[0].append([track_cls, origin_midpoint, intersection_time])
