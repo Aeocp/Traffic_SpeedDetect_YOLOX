@@ -266,15 +266,14 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     speed_list = {} # ลิสความเร็วทั้งหมดที่คำนวณได้
     speed_avg = 0   # ค่าเฉลี่ยความเร็วทั้งหมด        
 
-    ret, frame = video_capture.read()  # frame shape 640*480*3
     #สร้างเส้นผ่าน
-    frameY = frame.shape[0] #360
-    frameX = frame.shape[1] #640
+    frameY = width #360
+    frameX = height #640
     line1 = []
     line2 = []
     #สร้างเส้น1,2ของถนนแต่ละเส้น:
-    line1.append([(int(float(x1[0]) * frameX), int(float(y1[0])* frameY)), (int(float(x1[1]) * frameX), int(float(y1[1]) * frameY))])
-    line2.append([(int(float(x2[0]) * frameX), int(float(y2[0])* frameY)), (int(float(x2[1]) * frameX), int(float(y2[1]) * frameY))])
+    line1.append([(int(float(x1[0]) * width), int(float(y1[0])* height)), (int(float(x1[1]) * width), int(float(y1[1]) * height))])
+    line2.append([(int(float(x2[0]) * width), int(float(y2[0])* height)), (int(float(x2[1]) * width), int(float(y2[1]) * height))])
         
     while True:
         if (test == 1):
