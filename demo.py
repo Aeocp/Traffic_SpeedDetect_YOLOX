@@ -5,6 +5,9 @@
 from loguru import logger
 
 import cv2
+from absl import app, flags, logging
+from absl.flags import 
+flags.DEFINE_string('url','https://camerai1.iticfoundation.org/hls/pty02.m3u8','input url')
 
 import torch
 
