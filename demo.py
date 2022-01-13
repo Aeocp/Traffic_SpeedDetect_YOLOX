@@ -269,7 +269,9 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     # สร้างเส้นผ่าน1,2
     line1 = [(int(float(x1[0]) * width), int(float(y1[0])* height)), (int(float(x1[1]) * width), int(float(y1[1]) * height))]
     line2 = [(int(float(x2[0]) * width), int(float(y2[0])* height)), (int(float(x2[1]) * width), int(float(y2[1]) * height))]
-        
+    
+    ret_val, frame = cap.read()
+    
     while True:
         if (test == 1):
             test = 0
