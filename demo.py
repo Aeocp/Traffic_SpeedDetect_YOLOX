@@ -263,7 +263,8 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     line2_ac = deque(maxlen=50) # temporary memory for storing counted IDs forLine2
     memory = {}     # เก็บว่าเคยพิจารณาIDนี้ไปหรือยัง + ไว้เก็บmidpointไม่เกิน 2 จุด
     time_mem = {}   # เก็บframeที่IDนั้นๆผ่านของแต่ละเส้น
-    speed_list = {} # ลิสความเร็วทั้งหมดที่คำนวณได้
+    speed_list = {} # เก็บความเร็วทั้งหมดที่คำนวณได้
+    speed_list_1min = [] # เก็บความเร็วเฉลี่ยใน 1 นาที
     speed_avg = 0   # ค่าเฉลี่ยความเร็วทั้งหมด        
     test = 1
     # สร้างเส้นผ่าน1,2
@@ -281,6 +282,15 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
             cv2.line(frame, line1[0], line1[1], (255, 255, 255), 2)
             cv2.line(frame, line2[0], line2[1], (255, 255, 255), 2)
         if ret_val:
+            if mmglobal.frame_count % fps*60 == 0:
+                print("In 1 min")
+                print("speed_list: ", speed_list)
+                print(len(speed_list))
+                speed_list_1min.append(speed_avg)
+                print(speed_list_1min)
+                speed_avg = 0
+                speed_list = []
+                
             # Process every n frames
             t1 = time.time()
             if mmglobal.frame_count % 3 == 0:
@@ -330,7 +340,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                     if TC1 and (track.track_id not in line1_ac):
                         if track.track_id not in time_mem:
                             time_mem[track.track_id] = []
-                        time_mem[track.track_id].append(frame_index+1)
+                        time_mem[track.track_id].append(mmglobal.frame_count)
                         line_tc[0][0] += 1
                         # draw alert line
                         cv2.line(frame, line1[0], line1[1], (0, 0, 255), 2)
@@ -342,7 +352,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                     if TC2 and (track.track_id not in line2_ac):
                         if track.track_id not in time_mem:
                             time_mem[track.track_id] = []
-                        time_mem[track.track_id].append(frame_index+1)
+                        time_mem[track.track_id].append(mmglobal.frame_count)
                         line_tc[0][1] += 1
                         # draw alert line
                         cv2.line(frame, line2[0], line2[1], (0, 0, 255), 2)
@@ -355,9 +365,9 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                         time1 = time_mem[track.track_id][0]
                         time2 = time_mem[track.track_id][1]
                         time_mem[track.track_id] = []
-                        realtime = (time2-time1)/30 # แปลงเวลาในหน่วยเฟรมเป็นวินาที
+                        realtime = (time2-time1)/fps # แปลงเวลาในหน่วยเฟรมเป็นวินาที
                         speed = (distance/realtime)*3.6 # คำนวณและแปลงหน่วยเป็นกิโลเมตรต่อชั่วโมง
-                        speed_list[track.track_id] = speed
+                        speed_list[track.track_id] = speed # เก็บความเร็วที่คำนวณได้ของรถแต่ละคัน
                         savg = 0
                         co = len(speed_list)
                         for s in speed_list:
@@ -365,7 +375,6 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                         speed_avg = ('%.2f' % (savg/co))
                         print("Frame:",frame_index ," ID:" ,track.track_id ," speed:" ,('%.2f' %speed))
 
-                    cv2.rectangle(frame, (int(bbox[0]), int(bbox[1])), (int(bbox[2]), int(bbox[3])), (0, 255, 0), 2)
                     cv2.putText(frame, "ID: " + str(track.track_id), (int(bbox[0]), int(bbox[1])), 0, 1.5e-3 * frame.shape[0], (0, 255, 0), 2)
                     if track.track_id in speed_list:
                         cv2.putText(frame, str('%.2f' %speed_list[track.track_id]), (int(bbox[2]), int(bbox[1])), 0, 1.5e-3 * frame.shape[0], (0, 0, 255), 2)
@@ -392,6 +401,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
                     vid_writer.write(frame)
                     print('imutils FPS: {}'.format(fps_imutils.fps()))
                     print('speed_avg : {}'.format(str(speed_avg)))
+                    print('speed_avg_1min : {}'.format(str(speed_list_1min)))
                     print('จำนวนรถที่วัดความเร็วได้',len(speed_list))
                     print('จำนวนรถทั้งหมด',str(line_tc))
                 ch = cv2.waitKey(1)
