@@ -5,9 +5,6 @@
 from loguru import logger
 
 import cv2
-from absl import app, flags, logging
-from absl.flags import FLAGS
-flags.DEFINE_string('url','https://camerai1.iticfoundation.org/hls/pty02.m3u8','input url')
 
 import torch
 
@@ -222,7 +219,7 @@ def imageflow_demo(predictor, vis_folder, current_time, args):
     distance = input("Enter distance between lines(m) :")
     distance = int(distance)
     #cap = cv2.VideoCapture(args.path if args.demo == "video" else args.camid) #video
-    cap = cv2.VideoCapture("FLAGS.url") #url real-time
+    cap = cv2.VideoCapture("https://camerai1.iticfoundation.org/hls/pty02.m3u8") #url real-time
     width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)  # float
     height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)  # float
     fps = cap.get(cv2.CAP_PROP_FPS)
